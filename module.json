@@ -3,7 +3,7 @@
   "title": "Tiles Layer Viewer",
   "description": "A small module that lets the GM view all  tiles in a list and acts the layer tool from photo editing software.",
   "author": "Frank Deaton",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": ["tiles-layered.js"],
   "minimumCoreVersion": "0.6.0",
   "url": "https://github.com/FrankDeeeeeee/tile-layer-viewer",

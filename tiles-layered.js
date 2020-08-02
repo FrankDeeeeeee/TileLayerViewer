@@ -151,6 +151,5 @@ class TLViewer extends Application {
 
 Hooks.on('getSceneControlButtons', function(hudButtons)
 {
-	Console.log("event taking place");
     TLViewer.prepareButtons(hudButtons);
 })
