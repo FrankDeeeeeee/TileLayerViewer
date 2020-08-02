@@ -1,4 +1,3 @@
-// "esmodules": ["tiles-layered.js"],
 
 class TLViewer extends Application {
   super(options){
@@ -32,7 +31,7 @@ class TLViewer extends Application {
   }
 */
   static prepareButtons(hudButtons){
-    let hud = hudButtons.find(val => {return val.name == "tile";})
+    let hud = hudButtons.find(val => {return val.name == "tiles";})
     
     if (hud){
         hud.tools.push({
