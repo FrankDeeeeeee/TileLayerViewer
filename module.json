@@ -1,5 +1,5 @@
 {
-  "name": "TileLayerViewer",
+  "name": "tile-layer-viewer",
   "title": "Tiles Layer Viewer",
   "description": "A small module that lets the GM view all  tiles in a list and acts the layer tool from photo editing software.",
   "author": "Frank Deaton",
