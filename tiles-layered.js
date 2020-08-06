@@ -91,7 +91,7 @@ class TLViewer extends Application {
 		let tileImage = tiles[i];
 		let tileID = tileImage.id;
 		let splitRes = tileImage.data.img.split('/');
-		let tName = splitRes.split('.')[0];
+		let tName = splitRes[splitRes.length-1].split('.')[0];
 		tileImage.name = name;
 		
 		rows.push
