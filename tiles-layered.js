@@ -137,7 +137,7 @@ class TLViewer extends Application {
 		(
 			`<tr><td width="70"><img src="${tileImage.data.img}" width="50" height="50"></img>
 			</td><td>${tName}</td>
-			<td><button type="button" id="${tileID}" name="Visible" onclick=''>${!isVisible.toString()}</button></td>
+			<td><button type="button" id="${tileID}" name="Visible" onclick=''>${(!isVisible).toString()}</button></td>
 			<td><button type="button" id="${tileID}" name="Locked" onclick=''>${isLocked.toString()}</button></td></tr>`
 		);	
 	}
