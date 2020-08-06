@@ -1,39 +1,68 @@
 
 class TLViewer extends Application {
   super(options){
-    console.log("Super called");
+    //console.log("Super called");
   }
 
   activateListeners(html) {
     super.activateListeners(html);
 	
-    const myButton = html.find("button[name='Visible']");
-    myButton.on("click", event => this._onClickButtonVisibility(event, html));
+    const myButtonV = html.find("button[name='Visible']");
+    myButtonV.on("click", event => this._onClickButtonVisibility(event));
+	
+	const myButtonL = html.find("button[name='Locked']");
+    myButton.on("click", event => this._onClickButtonLocked(event));
 	
   }   
   
-  async _onClickButtonVisibility(event, html) {
+  async _onClickButtonVisibility(event) {
+    //console.log("Event target id "+event.target.id);
+
+    const tileId = event.target.id;
+    const tile = canvas.tiles.get(tileId);
+    const isHidden = !tile.data.hidden;
+    const nData = [tile.data];
+    
+    await canvas.tiles.updateMany(nData.map(o=> 
+	{
+		return {_id:tileId,hidden:isHidden}
+		
+	}));
+    this.render(false);
+  }
+
+  async _onClickButtonLocked(event) {
+    //console.log("Event target id "+event.target.id);
+
+    const tileId = event.target.id;
+    const tile = canvas.tiles.get(tileId);
+    const isLocked = !tile.data.locked;
+    const nData = [tile.data];
+    
+    await canvas.tiles.updateMany(nData.map(o=> 
+	{
+		return {_id:tileId,locked:isLocked}		
+	}));
+	
+    this.render(false);
+  }
+
+  async _onClickButtonSort(event, up) {
     //console.log("Event target id "+event.target.id);
 
     const tileId = event.target.id;
     const tile = canvas.tiles.get(tileId);
     const opHidden = !tile.data.hidden;
     const nData = [tile.data];
-    await ChatMessage.create({
-      content: `${tile.name} visiblity has changed to ${tile.data.hidden.toString}`,
-      speaker:
-          {
-              alias: "Engine: "
-          }
-      });
+    
     await canvas.tiles.updateMany(nData.map(o=> 
 	{
-		return {_id:tileID,hidden:opHidden}
+		return {_id:tileId,hidden:opHidden}
 		
 	}));
     this.render(false);
   }
-
+  
   static prepareButtons(hudButtons)
   {
     let hud = hudButtons.find(val => {return val.name == "tiles";})
@@ -87,7 +116,12 @@ class TLViewer extends Application {
 	let rows;
 	if (game.user.isGM)
 	{
-		rows=[`<tr><td style="background: black; color: white;"></td><td style="background: black; color: white;">Tile</td><td style="background: black; color: white;">Visbility</td>`];
+		rows=[
+		`<tr>
+		<td style="background: black; color: white;"></td>
+		<td style="background: black; color: white;">Tile</td>
+		<td style="background: black; color: white;">Visbility</td>
+		<td style="background: black; color: white;">Locked</td>`];
 	}
 	//Create a row for each combatant with the correct flag
 	for(var i=0;i<tiles.length;i++)
@@ -98,11 +132,13 @@ class TLViewer extends Application {
 		let tName = splitRes[splitRes.length-1].split('.')[0].replace(/\s/g,'');
 		tileImage.name = name;
 		let isVisible  = tileImage.data.hidden;
+		let isLocked = tileImage.data.locked;
 		rows.push
 		(
 			`<tr><td width="70"><img src="${tileImage.data.img}" width="50" height="50"></img>
 			</td><td>${tName}</td>
-			<td><button type="button" id="${tileID}" name="Visible" onclick=''>${isVisible.toString()}</button></td></tr>`
+			<td><button type="button" id="${tileID}" name="Visible" onclick=''>${!isVisible.toString()}</button></td>
+			<td><button type="button" id="${tileID}" name="Locked" onclick=''>${isLocked.toString()}</button></td></tr>`
 		);	
 	}
 	let myContents=`${table}`;
