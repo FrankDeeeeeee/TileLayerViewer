@@ -6,30 +6,30 @@ class TLViewer extends Application {
 
   activateListeners(html) {
     super.activateListeners(html);
-	/*
-    const myButton = html.find("button[name='act']");
-    myButton.on("click", event => this._onClickButton(event, html));
-	*/
+	
+    const myButton = html.find("button[name='Visible']");
+    myButton.on("click", event => this._onClickButtonVisibility(event, html));
+	
   }   
-  /*
-  async _onClickButton(event, html) {
+  
+  async _onClickButtonVisibility(event, html) {
     //console.log("Event target id "+event.target.id);
 
-    const tokenId = event.target.id;
-    const token = canvas.tokens.get(tokenId);
+    const tileId = event.target.id;
+    const tile = canvas.tiles.get(tileId);
     
-    await token.setFlag("world","popcornHasActed",true);
+    await tile.data.hidden = !tile.data.hidden;
     await ChatMessage.create({
-      content: `${token.name} is acting now.`,
+      content: `${tile.name} visiblity has changed to ${tile.data.hidden.toString}`,
       speaker:
           {
-              alias: "Game: "
+              alias: "Engine: "
           }
       });
-      game.socket.emit("module.Popcorn",{"HasActed":true});
+     
     this.render(false);
   }
-*/
+
   static prepareButtons(hudButtons)
   {
     let hud = hudButtons.find(val => {return val.name == "tiles";})
@@ -83,7 +83,7 @@ class TLViewer extends Application {
 	let rows;
 	if (game.user.isGM)
 	{
-		rows=[`<tr><td style="background: black; color: white;"></td><td style="background: black; color: white;">Character</td><td style="background: black; color: white;">Act Now?</td>`];
+		rows=[`<tr><td style="background: black; color: white;"></td><td style="background: black; color: white;">Tile</td><td style="background: black; color: white;">Visbility</td>`];
 	}
 	//Create a row for each combatant with the correct flag
 	for(var i=0;i<tiles.length;i++)
@@ -91,14 +91,14 @@ class TLViewer extends Application {
 		let tileImage = tiles[i];
 		let tileID = tileImage.id;
 		let splitRes = tileImage.data.img.split('/');
-		let tName = splitRes[splitRes.length-1].split('.')[0];
+		let tName = splitRes[splitRes.length-1].split('.')[0].replace(/\s/g,'');
 		tileImage.name = name;
-		
+		let isVisible  = tileImage.data.hidden;
 		rows.push
 		(
 			`<tr><td width="70"><img src="${tileImage.data.img}" width="50" height="50"></img>
 			</td><td>${tName}</td>
-			<td><button type="button" id="${tileID}" name="Visible" onclick=''>Visible</button></td></tr>`
+			<td><button type="button" id="${tileID}" name="Visible" onclick=''>${isVisible.toString()}</button></td></tr>`
 		);	
 	}
 	let myContents=`${table}`;
