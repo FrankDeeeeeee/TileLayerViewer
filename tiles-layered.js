@@ -17,8 +17,8 @@ class TLViewer extends Application {
 
     const tileId = event.target.id;
     const tile = canvas.tiles.get(tileId);
-    
-    await tile.data.hidden = !tile.data.hidden;
+    const opHidden = !tile.data.hidden;
+    const nData = [tile.data];
     await ChatMessage.create({
       content: `${tile.name} visiblity has changed to ${tile.data.hidden.toString}`,
       speaker:
@@ -26,7 +26,11 @@ class TLViewer extends Application {
               alias: "Engine: "
           }
       });
-     
+    await canvas.tiles.updateMany(nData.map(o=> 
+	{
+		return {_id:tileID,hidden:opHidden}
+		
+	}));
     this.render(false);
   }
 
