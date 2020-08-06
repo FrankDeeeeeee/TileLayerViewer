@@ -11,7 +11,7 @@ class TLViewer extends Application {
     myButtonV.on("click", event => this._onClickButtonVisibility(event));
 	
 	const myButtonL = html.find("button[name='Locked']");
-    myButton.on("click", event => this._onClickButtonLocked(event));
+    myButtonL.on("click", event => this._onClickButtonLocked(event));
 	
   }   
   
@@ -129,8 +129,8 @@ class TLViewer extends Application {
 		let tileImage = tiles[i];
 		let tileID = tileImage.id;
 		let splitRes = tileImage.data.img.split('/');
-		let tName = splitRes[splitRes.length-1].split('.')[0].replace(/\s/g,'');
-		tileImage.name = name;
+		let tName = splitRes[splitRes.length-1].split('.')[0].replace(/%20/g,'');
+		tileImage.name = tName;
 		let isVisible  = tileImage.data.hidden;
 		let isLocked = tileImage.data.locked;
 		rows.push
