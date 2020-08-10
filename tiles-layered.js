@@ -99,18 +99,12 @@ class TLViewer extends Application
 			}   
 		}
 
-
-
-
 		if(canUpdate)
 		{
-			
 			//sends the update
-			await canvas.tiles.updateMany(update);
-
+			await canvas.tiles.updateMany(update).then(this.render(flase));
+		
 		}
-		this.render(false);
-
 	}
 
 	static prepareButtons(hudButtons)
