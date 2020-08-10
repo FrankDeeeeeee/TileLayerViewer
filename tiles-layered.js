@@ -61,7 +61,7 @@ class TLViewer extends Application
   {
 	const siblings = canvas.tiles.placeables;
 	//putting tile into an array for updateMany function.
-    const nData = [convas.tiles.get(tileId)];
+    const nData = [canvas.tiles.get(tileId)];
 
     // Determine target sort index
     let z = 0;
@@ -77,7 +77,7 @@ class TLViewer extends Application
       let d = up ? i : i * -1;
       return {_id: o.id, z: z + d};
     });
-	await this.layer.updateMany(updates);
+	await canvas.tiles.updateMany(updates);
 	await refresh();
   }
 
