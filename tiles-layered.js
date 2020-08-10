@@ -102,7 +102,15 @@ class TLViewer extends Application
 		if(canUpdate)
 		{
 			//sends the update
-			await canvas.tiles.updateMany(update).then(this.render(false));
+			let response = await canvas.tiles.updateMany(update);
+			if(response.ok)
+			{
+				this.render(false);
+			}
+			else
+			{
+				console.log("reponse not ok.");
+			}
 		
 		}
 	}
