@@ -1,50 +1,50 @@
 
 class TLViewer extends Application 
 {
+	static instance;
+	super(options)
+	{
+	//console.log("Super called");
+	}
 
-  super(options)
-  {
-    //console.log("Super called");
-  }
+	activateListeners(html) 
+	{
+	super.activateListeners(html);
 
-  activateListeners(html) 
-  {
-    super.activateListeners(html);
-	
-    const myButtonV = html.find("button[name='Visible']");
-    myButtonV.on("click", event => this._onClickButtonVisibility(event));
-	
+	const myButtonV = html.find("button[name='Visible']");
+	myButtonV.on("click", event => this._onClickButtonVisibility(event));
+
 	const myButtonL = html.find("button[name='Locked']");
 	myButtonL.on("click", event => this._onClickButtonLocked(event));
-	
+
 	const myButtonU = html.find("button[name='Up']");
 	myButtonU.on("click", event => this._onClickButtonSort(true,event));
-	
-	const myButtonD = html.find("button[name='Down']");
-    myButtonD.on("click", event => this._onClickButtonSort(false,event));
-	
-  }   
-  
-  async _onClickButtonVisibility(event) 
-  {
-    //console.log("Event target id "+event.target.id);
 
-    const tileId = event.target.id;
-    const tile = canvas.tiles.get(tileId);
+	const myButtonD = html.find("button[name='Down']");
+	myButtonD.on("click", event => this._onClickButtonSort(false,event));
+
+	}   
+
+	async _onClickButtonVisibility(event) 
+	{
+	//console.log("Event target id "+event.target.id);
+
+	const tileId = event.target.id;
+	const tile = canvas.tiles.get(tileId);
 	const isHidden = !tile.data.hidden;
 	//putting tile into an array for updateMany function.
-    const nData = [tile.data];
-    
-    await canvas.tiles.updateMany(nData.map(o=> 
+	const nData = [tile.data];
+
+	await canvas.tiles.updateMany(nData.map(o=> 
 	{
 		return {_id:tileId,hidden:isHidden}
 		
 	}));
-    this.render(false);
-  }
+	this.render(false);
+	}
 
-  async _onClickButtonLocked(event) 
-  {
+	async _onClickButtonLocked(event) 
+	{
 	//console.log("Event target id "+event.target.id);
 
 	const tileId = event.target.id;
@@ -59,15 +59,13 @@ class TLViewer extends Application
 	}));
 
 	this.render(false);
-  }
-  
-  async _onClickButtonSort(up, event) 
-  {
+	}
+
+	async _onClickButtonSort(up, event) 
+	{
 	const tileId = event.target.id;
 	const siblings = canvas.tiles.placeables;
-	//putting tile into an array for updateMany function.
-	const nData = [canvas.tiles.get(tileId)];
-
+	
 	// Determine target sort index
 	let z = 0;
 	if ( up ) {     
@@ -77,36 +75,30 @@ class TLViewer extends Application
 		z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
 	}
 
+	let i = 100;
+	const update1 = siblings.map((o) => 
+	{
+		return {_id:o.id,z:i++};
+	});
+	await canvas.tiles.updateMany(update1);
+
+	//putting tile into an array for updateMany function.
+	const nData = [canvas.tiles.get(tileId)];
+
 	// Update tile z
-	const updates = nData.map((o, i) => {
+	const updates = nData.map((o, i) => 
+	{
 		let d = up ? i : i * -1;
 		return {_id: o.id, z: z + d};
 	});
 	await canvas.tiles.updateMany(updates);
-	await TLViewer.refresh();
-  }
+	this.render(false);
+	}
 
-
-
-
-  static refresh()
-  {
-	let opt=Dialog.defaultOptions;
-	opt.resizable=true;
-	opt.title="Tile Layering";
-	opt.width=400;
-	opt.height=500;
-	opt.minimizable=true;
-	
-	var viewer;
-	viewer = new TLViewer(opt);
-	viewer.render(true);
-  }
-
-  static prepareButtons(hudButtons)
-  {
-    let hud = hudButtons.find(val => {return val.name == "tiles";})
-    if(game.user.isGM)
+	static prepareButtons(hudButtons)
+	{
+	let hud = hudButtons.find(val => {return val.name == "tiles";})
+	if(game.user.isGM)
 	{
 		if (hud)
 		{
@@ -117,36 +109,36 @@ class TLViewer extends Application
 				icon:"fas fa-bolt",
 				onClick: ()=> 
 				{
-				  const delay = 200;
+					const delay = 200;
 
-				  let opt=Dialog.defaultOptions;
-				  opt.resizable=true;
-				  opt.title="Tile Layering";
-				  opt.width=400;
-				  opt.height=500;
-				  opt.minimizable=true;
-				  
-				  var viewer;
-				  viewer = new TLViewer(opt);
-				  viewer.render(true);
-				             
+					let opt=Dialog.defaultOptions;
+					opt.resizable=true;
+					opt.title="Tile Layering";
+					opt.width=400;
+					opt.height=500;
+					opt.minimizable=true;
+					
+					var viewer;
+					viewer = new TLViewer(opt);
+					viewer.render(true);
+								
 				},
 				button:true
 			});
 		}
 	}
-  }
+	}
 
-  getData()
-  {
-    let content={content:`${this.prepareTLViewer()}`}
-    return content;
-  }
+	getData()
+	{
+	let content={content:`${this.prepareTLViewer()}`}
+	return content;
+	}
 
-  prepareTLViewer()
-  {
-    console.log("Prepare tl viewer called");
-    //Get a list of the active combatants
+	prepareTLViewer()
+	{
+	console.log("Prepare tl viewer called");
+	//Get a list of the active combatants
 
 
 	var tiles = TilesLayer.instance.placeables;	
@@ -192,7 +184,7 @@ class TLViewer extends Application
 
 	return myContents;
 
-  }
+	}
 
 }
 
