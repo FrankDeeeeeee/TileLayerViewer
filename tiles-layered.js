@@ -59,6 +59,7 @@ class TLViewer extends Application
   
   async _onClickButtonSort(up, event) 
   {
+	const tileId = event.target.id;
 	const siblings = canvas.tiles.placeables;
 	//putting tile into an array for updateMany function.
     const nData = [canvas.tiles.get(tileId)];
