@@ -83,9 +83,9 @@ class TLViewer extends Application
 			canUpdate = nIndex != siblings.length-1;
 			if(canUpdate)
 			{
-				let z = update[nIndex].data.z;
-				update[nIndex] = update[nIndex+1].data.z;
-				update[nIndex+1].data.z = z;
+				let z = update[nIndex].z;
+				update[nIndex] = update[nIndex+1].z;
+				update[nIndex+1].z = z;
 			}   			
 		}
 		else
@@ -93,9 +93,9 @@ class TLViewer extends Application
 			canUpdate = nIndex != 0;
 			if(canUpdate)
 			{
-				let z = update[nIndex].data.z;
-				update[nIndex] = update[nIndex-1].data.z;
-				update[nIndex-1].data.z = z;
+				let z = update[nIndex].z;
+				update[nIndex] = update[nIndex-1].z;
+				update[nIndex-1].z = z;
 			}   
 		}
 
