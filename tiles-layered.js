@@ -79,7 +79,7 @@ class TLViewer extends Application
       return {_id: o.id, z: z + d};
     });
 	await canvas.tiles.updateMany(updates);
-	await refresh();
+	await TLViewer.refresh();
   }
 
 
