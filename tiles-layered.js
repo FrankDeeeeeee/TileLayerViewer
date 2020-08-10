@@ -84,7 +84,7 @@ class TLViewer extends Application
 			if(canUpdate)
 			{
 				let z = update[nIndex].z;
-				update[nIndex] = update[nIndex+1].z;
+				update[nIndex].z = update[nIndex+1].z;
 				update[nIndex+1].z = z;
 			}   			
 		}
@@ -94,7 +94,7 @@ class TLViewer extends Application
 			if(canUpdate)
 			{
 				let z = update[nIndex].z;
-				update[nIndex] = update[nIndex-1].z;
+				update[nIndex].z = update[nIndex-1].z;
 				update[nIndex-1].z = z;
 			}   
 		}
