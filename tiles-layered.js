@@ -27,106 +27,116 @@ class TLViewer extends Application
 
 	async _onClickButtonVisibility(event) 
 	{
-	//console.log("Event target id "+event.target.id);
+		//console.log("Event target id "+event.target.id);
 
-	const tileId = event.target.id;
-	const tile = canvas.tiles.get(tileId);
-	const isHidden = !tile.data.hidden;
-	//putting tile into an array for updateMany function.
-	const nData = [tile.data];
+		const tileId = event.target.id;
+		const tile = canvas.tiles.get(tileId);
+		const isHidden = !tile.data.hidden;
+		//putting tile into an array for updateMany function.
+		const nData = [tile.data];
 
-	await canvas.tiles.updateMany(nData.map(o=> 
-	{
-		return {_id:tileId,hidden:isHidden}
-		
-	}));
-	this.render(false);
-	}
+		await canvas.tiles.updateMany(nData.map(o=> 
+		{
+			return {_id:tileId,hidden:isHidden}
+			
+		}));
+		this.render(false);
+		}
 
-	async _onClickButtonLocked(event) 
-	{
-	//console.log("Event target id "+event.target.id);
+		async _onClickButtonLocked(event) 
+		{
+		//console.log("Event target id "+event.target.id);
 
-	const tileId = event.target.id;
-	const tile = canvas.tiles.get(tileId);
-	const isLocked = !tile.data.locked;
-	//putting tile into an array for updateMany function.
-	const nData = [tile.data];
+		const tileId = event.target.id;
+		const tile = canvas.tiles.get(tileId);
+		const isLocked = !tile.data.locked;
+		//putting tile into an array for updateMany function.
+		const nData = [tile.data];
 
-	await canvas.tiles.updateMany(nData.map(o=> 
-	{
-		return {_id:tileId,locked:isLocked}		
-	}));
+		await canvas.tiles.updateMany(nData.map(o=> 
+		{
+			return {_id:tileId,locked:isLocked}		
+		}));
 
-	this.render(false);
+		this.render(false);
 	}
 
 	async _onClickButtonSort(up, event) 
 	{
-	const tileId = event.target.id;
-	const siblings = canvas.tiles.placeables;
-	
-	// Determine target sort index
-	let z = 0;
-	if ( up ) {     
-		z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
-	}
-	else {
-		z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
-	}
+		const tileId = event.target.id;
+		const siblings = canvas.tiles.placeables;
+		
+		// Determine target sort index
+		
+		let i = 100;
+		const update1 = siblings.map((o) => 
+		{
+			return {_id:o.id,z:i++};
+		});
+		await canvas.tiles.updateMany(update1);
 
-	let i = 100;
-	const update1 = siblings.map((o) => 
-	{
-		return {_id:o.id,z:i++};
-	});
-	await canvas.tiles.updateMany(update1);
+		//putting tile into an array for updateMany function.
+		const nData = [canvas.tiles.get(tileId)];
 
-	//putting tile into an array for updateMany function.
-	const nData = [canvas.tiles.get(tileId)];
+		let canUpdate = true;
+		let z = 0;
+		if (up)
+		{     
+			z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
+			canUpdate = !(nData.data.z == 99 + siblings.length); 
+		}
+		else
+		{
+			z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
+			canUpdate = !(nData.data.z == 100);
+		}
 
-	// Update tile z
-	const updates = nData.map((o, i) => 
-	{
-		let d = up ? i : i * -1;
-		return {_id: o.id, z: z + d};
-	});
-	await canvas.tiles.updateMany(updates);
-	this.render(false);
+		if(canUpdate)
+		{
+			// Update tile z
+			const updates = nData.map((o, i) => 
+			{
+				let d = up ? i : i * -1;
+				return {_id: o.id, z: z + d};
+			});
+			await canvas.tiles.updateMany(updates);
+		}
+		this.render(false);
+
 	}
 
 	static prepareButtons(hudButtons)
 	{
-	let hud = hudButtons.find(val => {return val.name == "tiles";})
-	if(game.user.isGM)
-	{
-		if (hud)
+		let hud = hudButtons.find(val => {return val.name == "tiles";})
+		if(game.user.isGM)
 		{
-			hud.tools.push(
+			if (hud)
 			{
-				name:"Tile Layer Viewer",
-				title:"Pop-out Tile Layer Viewer",
-				icon:"fas fa-bolt",
-				onClick: ()=> 
+				hud.tools.push(
 				{
-					const delay = 200;
+					name:"Tile Layer Viewer",
+					title:"Pop-out Tile Layer Viewer",
+					icon:"fas fa-bolt",
+					onClick: ()=> 
+					{
+						const delay = 200;
 
-					let opt=Dialog.defaultOptions;
-					opt.resizable=true;
-					opt.title="Tile Layering";
-					opt.width=400;
-					opt.height=500;
-					opt.minimizable=true;
-					
-					var viewer;
-					viewer = new TLViewer(opt);
-					viewer.render(true);
-								
-				},
-				button:true
-			});
+						let opt=Dialog.defaultOptions;
+						opt.resizable=true;
+						opt.title="Tile Layering";
+						opt.width=400;
+						opt.height=500;
+						opt.minimizable=true;
+						
+						var viewer;
+						viewer = new TLViewer(opt);
+						viewer.render(true);
+									
+					},
+					button:true
+				});
+			}
 		}
-	}
 	}
 
 	getData()
@@ -140,8 +150,7 @@ class TLViewer extends Application
 	console.log("Prepare tl viewer called");
 	//Get a list of the active combatants
 
-
-	var tiles = TilesLayer.instance.placeables;	
+	var tiles = TilesLayer.instance.placeables.reverse();	
 	var viewer = viewer;
 	let table=`<h1>Tile Layers</h1><table border="1" cellspacing="0" cellpadding="4">`;
 
