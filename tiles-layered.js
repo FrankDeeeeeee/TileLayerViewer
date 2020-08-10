@@ -150,7 +150,7 @@ class TLViewer extends Application
 	console.log("Prepare tl viewer called");
 	//Get a list of the active combatants
 
-	var tiles = TilesLayer.instance.placeables.reverse();	
+	var tiles = TilesLayer.instance.placeables.slice().reverse();	
 	var viewer = viewer;
 	let table=`<h1>Tile Layers</h1><table border="1" cellspacing="0" cellpadding="4">`;
 
