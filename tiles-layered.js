@@ -1,5 +1,7 @@
 
-class TLViewer extends Application {
+class TLViewer extends Application 
+{
+
   super(options){
     //console.log("Super called");
   }
@@ -11,7 +13,13 @@ class TLViewer extends Application {
     myButtonV.on("click", event => this._onClickButtonVisibility(event));
 	
 	const myButtonL = html.find("button[name='Locked']");
-    myButtonL.on("click", event => this._onClickButtonLocked(event));
+	myButtonL.on("click", event => this._onClickButtonLocked(event));
+	
+	const myButtonU = html.find("button[name='Up']");
+	myButtonU.on("click", event => this._onClickButtonSort(true,event));
+	
+	const myButtonD = html.find("button[name='Down']");
+    myButtonD.on("click", event => this._onClickButtonSort(false,event));
 	
   }   
   
@@ -20,7 +28,8 @@ class TLViewer extends Application {
 
     const tileId = event.target.id;
     const tile = canvas.tiles.get(tileId);
-    const isHidden = !tile.data.hidden;
+	const isHidden = !tile.data.hidden;
+	//putting tile into an array for updateMany function.
     const nData = [tile.data];
     
     await canvas.tiles.updateMany(nData.map(o=> 
@@ -36,7 +45,8 @@ class TLViewer extends Application {
 
     const tileId = event.target.id;
     const tile = canvas.tiles.get(tileId);
-    const isLocked = !tile.data.locked;
+	const isLocked = !tile.data.locked;
+	//putting tile into an array for updateMany function.
     const nData = [tile.data];
     
     await canvas.tiles.updateMany(nData.map(o=> 
@@ -46,23 +56,48 @@ class TLViewer extends Application {
 	
     this.render(false);
   }
-
-  async _onClickButtonSort(event, up) {
-    //console.log("Event target id "+event.target.id);
-
-    const tileId = event.target.id;
-    const tile = canvas.tiles.get(tileId);
-    const opHidden = !tile.data.hidden;
-    const nData = [tile.data];
-    
-    await canvas.tiles.updateMany(nData.map(o=> 
-	{
-		return {_id:tileId,hidden:opHidden}
-		
-	}));
-    this.render(false);
-  }
   
+  async _onClickButtonSort(up, event) 
+  {
+	const siblings = Canvas.tiles.placeables;
+	//putting tile into an array for updateMany function.
+    const nData = [convas.tiles.get(tileId)];
+
+    // Determine target sort index
+    let z = 0;
+    if ( up ) {     
+      z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
+    }
+    else {
+      z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
+    }
+
+    // Update tile z
+    const updates = nData.map((o, i) => {
+      let d = up ? i : i * -1;
+      return {_id: o.id, z: z + d};
+    });
+	await this.layer.updateMany(updates);
+	await refresh();
+  }
+
+
+
+
+  static refresh()
+  {
+	let opt=Dialog.defaultOptions;
+	opt.resizable=true;
+	opt.title="Tile Layering";
+	opt.width=400;
+	opt.height=500;
+	opt.minimizable=true;
+	
+	var viewer;
+	viewer = new TLViewer(opt);
+	viewer.render(true);
+  }
+
   static prepareButtons(hudButtons)
   {
     let hud = hudButtons.find(val => {return val.name == "tiles";})
@@ -88,7 +123,8 @@ class TLViewer extends Application {
 				  
 				  var viewer;
 				  viewer = new TLViewer(opt);
-				  viewer.render(true);              
+				  viewer.render(true);
+				             
 				},
 				button:true
 			});
@@ -121,7 +157,9 @@ class TLViewer extends Application {
 		<td style="background: black; color: white;"></td>
 		<td style="background: black; color: white;">Tile</td>
 		<td style="background: black; color: white;">Visbility</td>
-		<td style="background: black; color: white;">Locked</td>`];
+		<td style="background: black; color: white;">Locked</td>
+		<td style="background: black; color: white;">Up</td>
+		<td style="background: black; color: white;">Down</td>`];
 	}
 	//Create a row for each combatant with the correct flag
 	for(var i=0;i<tiles.length;i++)
@@ -138,7 +176,9 @@ class TLViewer extends Application {
 			`<tr><td width="70"><img src="${tileImage.data.img}" width="50" height="50"></img>
 			</td><td>${tName}</td>
 			<td><button type="button" id="${tileID}" name="Visible" onclick=''>${(!isVisible).toString()}</button></td>
-			<td><button type="button" id="${tileID}" name="Locked" onclick=''>${isLocked.toString()}</button></td></tr>`
+			<td><button type="button" id="${tileID}" name="Locked" onclick=''>${isLocked.toString()}</button></td>
+			<td><button type="button" id="${tileID}" name="Up" onclick=''>Up</button></td>
+			<td><button type="button" id="${tileID}" name="Down" onclick=''>Down</button></td></tr>`
 		);	
 	}
 	let myContents=`${table}`;
