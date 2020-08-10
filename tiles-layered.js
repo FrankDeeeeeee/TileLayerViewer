@@ -99,10 +99,15 @@ class TLViewer extends Application
 			}   
 		}
 
+
+
+
 		if(canUpdate)
 		{
 			
+			//sends the update
 			await canvas.tiles.updateMany(update);
+
 		}
 		this.render(false);
 
