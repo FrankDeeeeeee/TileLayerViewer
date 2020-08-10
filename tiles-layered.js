@@ -2,11 +2,13 @@
 class TLViewer extends Application 
 {
 
-  super(options){
+  super(options)
+  {
     //console.log("Super called");
   }
 
-  activateListeners(html) {
+  activateListeners(html) 
+  {
     super.activateListeners(html);
 	
     const myButtonV = html.find("button[name='Visible']");
@@ -23,7 +25,8 @@ class TLViewer extends Application
 	
   }   
   
-  async _onClickButtonVisibility(event) {
+  async _onClickButtonVisibility(event) 
+  {
     //console.log("Event target id "+event.target.id);
 
     const tileId = event.target.id;
@@ -40,21 +43,22 @@ class TLViewer extends Application
     this.render(false);
   }
 
-  async _onClickButtonLocked(event) {
-    //console.log("Event target id "+event.target.id);
+  async _onClickButtonLocked(event) 
+  {
+	//console.log("Event target id "+event.target.id);
 
-    const tileId = event.target.id;
-    const tile = canvas.tiles.get(tileId);
+	const tileId = event.target.id;
+	const tile = canvas.tiles.get(tileId);
 	const isLocked = !tile.data.locked;
 	//putting tile into an array for updateMany function.
-    const nData = [tile.data];
-    
-    await canvas.tiles.updateMany(nData.map(o=> 
+	const nData = [tile.data];
+
+	await canvas.tiles.updateMany(nData.map(o=> 
 	{
 		return {_id:tileId,locked:isLocked}		
 	}));
-	
-    this.render(false);
+
+	this.render(false);
   }
   
   async _onClickButtonSort(up, event) 
@@ -62,22 +66,22 @@ class TLViewer extends Application
 	const tileId = event.target.id;
 	const siblings = canvas.tiles.placeables;
 	//putting tile into an array for updateMany function.
-    const nData = [canvas.tiles.get(tileId)];
+	const nData = [canvas.tiles.get(tileId)];
 
-    // Determine target sort index
-    let z = 0;
-    if ( up ) {     
-      z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
-    }
-    else {
-      z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
-    }
+	// Determine target sort index
+	let z = 0;
+	if ( up ) {     
+		z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
+	}
+	else {
+		z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
+	}
 
-    // Update tile z
-    const updates = nData.map((o, i) => {
-      let d = up ? i : i * -1;
-      return {_id: o.id, z: z + d};
-    });
+	// Update tile z
+	const updates = nData.map((o, i) => {
+		let d = up ? i : i * -1;
+		return {_id: o.id, z: z + d};
+	});
 	await canvas.tiles.updateMany(updates);
 	await TLViewer.refresh();
   }
@@ -185,33 +189,10 @@ class TLViewer extends Application
 	let myContents=`${table}`;
 	rows.forEach(element => myContents+=element)
 	myContents+="</table>"
-	/*
-	if (game.user.isGM)
-	{
-		myContents+=`<button type ="button" onclick='
-		let actors = canvas.tokens.placeables;
-		actors.forEach(actor =>{actor.setFlag("world","popcornHasActed",false)});
-		game.combat.nextRound();
-		ChatMessage.create({content: "Starting a new exchange.", speaker : { alias : "Game: "}})
-		'>Next Exchange</button><p>`
-		myContents+=`<button type ="button" onclick='
-		let actors = canvas.tokens.placeables;
-		actors.forEach(actor =>{actor.setFlag("world","popcornHasActed",false)});
-		game.combat.endCombat();
-		ChatMessage.create({content: "Ending the conflict.", speaker : { alias : "Game: "}})
-		'>End this conflict</button>`
-	}
-	*/
+
 	return myContents;
 
-}
-
-  // This function prepares the contents of the popcorn initiative viewer
-  // Display the current exchange number
-  // Display the actor icon of each combatant for which popcornHasActed is false or undefined.
-  // Display the name of each combatant for which popcornHasActed is false or undefined.
-  // Display a button that says 'act now'
-  // At the end of the display of buttons etc. display a button that says 'next exchange'.
+  }
 
 }
 
