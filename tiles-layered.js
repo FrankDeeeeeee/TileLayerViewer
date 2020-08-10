@@ -64,41 +64,44 @@ class TLViewer extends Application
 	async _onClickButtonSort(up, event) 
 	{
 		const tileId = event.target.id;
-		const siblings = canvas.tiles.placeables;
-		
-		// Determine target sort index
-		
+		const siblings = canvas.tiles.placeables;		
+		// Determine target sort index		
 		let i = 100;
-		const update1 = siblings.map((o) => 
+		const update = siblings.map((o) => 
 		{
 			return {_id:o.id,z:i++};
 		});
-		await canvas.tiles.updateMany(update1);
 
 		//putting tile into an array for updateMany function.
-		const nData = [canvas.tiles.get(tileId)];
-
+		const nData = canvas.tiles.get(tileId);
+		const nIndex = canvas.tiles.placeables.findIndex((o) => o.data.z == nData.data.z);
 		let canUpdate = true;
-		let z = 0;
+				
+		//swap z for the closest two in the order of the button then send it in update to actually change the order
 		if (up)
-		{     
-			z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
-			canUpdate = !(nData[0].data.z == 99 + siblings.length); 
+		{  
+			canUpdate = nIndex != siblings.length-1;
+			if(canUpdate)
+			{
+				let z = update[nIndex].data.z;
+				update[nIndex] = update[nIndex+1].data.z;
+				update[nIndex+1].data.z = z;
+			}   			
 		}
 		else
 		{
-			z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
-			canUpdate = !(nData[0].data.z == 100);
+			canUpdate = nIndex != 0;
+			if(canUpdate)
+			{
+				let z = update[nIndex].data.z;
+				update[nIndex] = update[nIndex-1].data.z;
+				update[nIndex-1].data.z = z;
+			}   
 		}
 
 		if(canUpdate)
 		{
-			// Update tile z
-			const updates = nData.map((o, i) => 
-			{
-				let d = up ? i : i * -1;
-				return {_id: o.id, z: z + d};
-			});
+			
 			await canvas.tiles.updateMany(updates);
 		}
 		this.render(false);
