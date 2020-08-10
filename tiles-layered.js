@@ -83,12 +83,12 @@ class TLViewer extends Application
 		if (up)
 		{     
 			z = siblings.length ? Math.max(...siblings.map(o => o.data.z)) + 1 : 1;
-			canUpdate = !(nData.data.z == 99 + siblings.length); 
+			canUpdate = !(nData[0].data.z == 99 + siblings.length); 
 		}
 		else
 		{
 			z = siblings.length ? Math.min(...siblings.map(o => o.data.z)) - 1 : -1;
-			canUpdate = !(nData.data.z == 100);
+			canUpdate = !(nData[0].data.z == 100);
 		}
 
 		if(canUpdate)
